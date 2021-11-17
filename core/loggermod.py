@@ -14,6 +14,7 @@ def init():
 def logmsg(msg, uglvl):
     if uglvl == 'debug':
         logging.debug(msg)
+        
     elif uglvl == 'info':
         logging.info(msg)
     elif uglvl == 'warn':
