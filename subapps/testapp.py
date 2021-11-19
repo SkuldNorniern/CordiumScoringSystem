@@ -4,6 +4,7 @@ import typer
 import subprocess as sbp
 from core import loggermod as lgm
 from core import runnermod as rnm
+from core import miscfuncmod as mfm
 
 supported_language={".py":"Python",".cpp":"C/C++",".c":"C/C++",".java":"Java"}
 supported_extention=[".py",".c",".cpp",".java"]
@@ -17,6 +18,10 @@ def tester(file):
         lgm.logmsg('Not Supported!','err')
     else:
         typer.echo(f"{supported_language[ext]} is Supported")
+    
+    name = mfm.rmpathval(name)
     typer.echo(f"The name is {name},The user name is {user}, the extension is {ext}")
     res = rnm.compile(file,supported_language[ext],name,user)
-
+    if res:print("맞았습니다.")
+    else: print("틀렸습니다.")
+    
