@@ -20,7 +20,7 @@ def tester(file):
         typer.echo(f"{supported_language[ext]} is Supported")
     
     name = mfm.rmpathval(name)
-    typer.echo(f"The name is {name},The user name is {user}, the extension is {ext}")
+    typer.echo(f"The problem name is {name},The user name is {user}")
     res = rnm.compile(file,supported_language[ext],name,user)
     if res:print("맞았습니다.")
     else: print("틀렸습니다.")

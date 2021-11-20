@@ -1,11 +1,9 @@
 import os
 import typer
 import pickle
-import configparser
 from core import loggermod as lgm
 from core import miscfuncmod as mfm
 
-#file_cfg = "config.dat"
 file_pbdt = "problemdata.dat"
 file_dirdt = "dirdt.dat"
 
@@ -87,7 +85,7 @@ def calltd(name):
 
     with open(path+"/"+file_pbdt,'rb') as fr:
         pbtd = pickle.load(fr)
-    print(pbtd)
+    #print(pbtd)
     tdpath=pbtd[name]
     indtf=pbtd["input"]
     oudtf=pbtd["output"]
