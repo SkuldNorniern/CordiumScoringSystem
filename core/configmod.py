@@ -10,21 +10,23 @@ file_dirdt = "dirdt.dat"
 
 # Check for files that is needed 
 
-def chkdirdt(name,path):
+def chkdirdt(name,path="./",state=0):
     
     if os.path.exists(file_dirdt):
-        typer.echo('Dirctory data detected loading problems.')
-    else:
+        if(not(state)): typer.echo('Dirctory data detected loading problems.')
+        if(not(state)): return True
+    elif(state):
         typer.echo('Generating problem dirctory file.')
         gendirdt(name,path)
+    if(not(state)): return False
     
-def chkpbdt(name,path,dtcnt):
+def chkpbdt(name,path,dtcnt,timeout):
     pbpath = path+"./"+file_pbdt
     if os.path.exists(pbpath):
         typer.echo('Problem data detected loading data.')
     else:
         typer.echo('Generating problem data.')
-        genpbdt(name,path,pbpath,dtcnt)
+        genpbdt(name,path,pbpath,dtcnt,timeout)
 
 # Generate files that is missing or need to be generated
 
@@ -39,7 +41,7 @@ def gendirdt(name,path):
     with open(file_dirdt,'wb') as fw:
         pickle.dump(dirdt, fw)
     
-def genpbdt(name, path, pbpath,dtcnt):
+def genpbdt(name, path, pbpath,dtcnt,timeout):
     with open(file_dirdt,'rb') as fr:
         dirdt = pickle.load(fr)
     print(dirdt)
@@ -53,15 +55,23 @@ def genpbdt(name, path, pbpath,dtcnt):
     path="./"+mfm.rmpathval(path)
     out=open(pbpath, 'w')
     out.close
-    inittsdt(path,name,pbpath,dtcnt)
+    inittsdt(path,name,pbpath,dtcnt,timeout)
 
 # Setting up database
 
-def inittsdt(path,name,pbpath,dtcnt):
-    pbdt={'name':name,name:(path+"/"+"testdata"),"testcasecnt":dtcnt}
+def inittsdt(path,name,pbpath,dtcnt,timeout):
+    pbdt={'name':name,name:(path+"/"+"testdata"),"testcasecnt":dtcnt,"timeout":timeout}
     for i in range(1,dtcnt+1):
         inp=("input"+str(i)+".txt")
         oup=("output"+str(i)+".txt")
+        
+        # Migration & Correct some bad test data placement
+        if os.path.exists(path+"/"+inp):
+            if not(os.path.exists(path+"/"+"testdata")):
+                mfm.mkdir(path+"/"+"testdata")
+            mfm.movefile((path+"/"+inp),(path+"/"+"testdata"+"/"+inp))
+            mfm.movefile((path+"/"+oup),(path+"/"+"testdata"+"/"+oup))
+        
         if "input" in pbdt:
             pbdt["input"].append(inp)
         else:
@@ -77,11 +87,13 @@ def inittsdt(path,name,pbpath,dtcnt):
 
 # Call problem test data
 
-def calltd(name):
+def calldirdt(name):
     with open(file_dirdt,'rb') as fr:
         dirdt = pickle.load(fr)
-
-    path = dirdt[name]
+    return dirdt[name]
+    
+def calltd(name):
+    path = calldirdt(name)
 
     with open(path+"/"+file_pbdt,'rb') as fr:
         pbtd = pickle.load(fr)
@@ -90,4 +102,6 @@ def calltd(name):
     indtf=pbtd["input"]
     oudtf=pbtd["output"]
     dtcnt=pbtd["testcasecnt"]
-    return path,tdpath,indtf,oudtf,dtcnt
+    timeout=pbtd["timeout"]
+    return path,tdpath,indtf,oudtf,dtcnt,timeout
+

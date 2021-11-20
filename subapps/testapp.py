@@ -11,6 +11,7 @@ supported_extention=[".py",".c",".cpp",".java"]
 
 
 def tester(file):
+    typer.echo("----------Cordium Scoring System Made By Skuld Norniern----------")
     typer.echo(f"Given file is {file}")
     path,ext = os.path.splitext(file)
     name,user= path.split("-")
@@ -22,6 +23,8 @@ def tester(file):
     name = mfm.rmpathval(name)
     typer.echo(f"The problem name is {name},The user name is {user}")
     res = rnm.compile(file,supported_language[ext],name,user)
-    if res:print("맞았습니다.")
-    else: print("틀렸습니다.")
+    if res:print("Correct.")
+    else: print("Wrong.")
+    if(supported_language[ext]=="C/C++"):
+        mfm.rmfile("a.exe")
     

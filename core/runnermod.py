@@ -6,38 +6,32 @@ from core import configmod as cfm
 from core import miscfuncmod as mfm
 
 compile_args={"Python":"python","Java":"java","C/C++":"gcc"}
-plus_args={"Python":" ","Java":" ","C/C++":"a.exe"}
+plus_args={"Python":" ","Java":" ","C/C++":"&& a.exe"}
+timebuff={"Python":1.5,"Java":1.5,"C/C++":1}
 
 def compile(file,lang,name,user):
-    typer.echo(f"{file}")
-    path,tdpath,indtf,oudtf,dtcnt = cfm.calltd(name)
+    typer.echo(f"-----------------------------------------------------------------")
+    path,tdpath,indtf,oudtf,dtcnt,timelim = cfm.calltd(name)
     state=True
-    pt=100/dtcnt
-    cpt=0
-    for i in range (dtcnt):
-        f = open((tdpath+"/"+indtf[i]))
-        data = f.read()
-        #print(data)
-        process=sbp.Popen(f"{compile_args[lang]} {file}",shell=True,stdin=sbp.PIPE,stdout=sbp.PIPE,stderr=sbp.STDOUT,universal_newlines=True)
-        if lang=="C/C++": 
-            #print(f"{plus_args[lang]}")
-            process=sbp.Popen(f"{plus_args[lang]}",stdin=sbp.PIPE,stdout=sbp.PIPE,stderr=sbp.STDOUT,universal_newlines=True)
+    with typer.progressbar(range(dtcnt)) as progress:
+        for i in (progress):
+            f = open((tdpath+"/"+indtf[i]))
+            data = f.read()
+            #print(data)
+            process=sbp.Popen(f"{compile_args[lang]} {file} {plus_args[lang]}",shell=True,stdin=sbp.PIPE,stdout=sbp.PIPE,stderr=sbp.STDOUT,universal_newlines=True)
+            process.stdin.write(data)
+            process.stdin.flush()
+            f.close()
             
+            out, cmd_err = process.communicate(timeout=(timelim*timebuff[lang]))
+            
+            f = open((tdpath+"/"+oudtf[i]))
+            data = f.read()
+            f.close()
+            #print(data)
+            #print(out)
+            state=mfm.iscorrect(out.strip(),data.strip())
+            if not(state): break
         
-        process.stdin.write(data)
-        process.stdin.flush()
-        f.close()
-        
-        out, cmd_err = process.communicate()
-        
-        f = open((tdpath+"/"+oudtf[i]))
-        data = f.read()
-        f.close()
-        #print(data)
-        #print(out)
-        state=mfm.iscorrect(out.strip(),data.strip())
-        if not(state): break
-        cpt+=pt
-        print(f"{cpt}%")
     if state: mfm.movefile(file,path)
     return state
