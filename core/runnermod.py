@@ -4,15 +4,21 @@ import typer
 import subprocess as sbp
 from core import configmod as cfm
 from core import miscfuncmod as mfm
+from core import datasetmod as dsm
 
 compile_args={"Python":"python","Java":"java","C/C++":"gcc"}
 plus_args={"Python":" ","Java":" ","C/C++":"&& a.exe"}
 timebuff={"Python":1.5,"Java":1.5,"C/C++":1}
 
 def compile(file,lang,name,user):
+    
     typer.echo(f"-----------------------------------------------------------------")
+    
     path,tdpath,indtf,oudtf,dtcnt,timelim = cfm.calltd(name)
     state=True
+    #dsm.addname(user)
+    #typer.echo("Adding name to scoreboard")
+    i=0
     with typer.progressbar(range(dtcnt)) as progress:
         for i in (progress):
             f = open((tdpath+"/"+indtf[i]))
@@ -31,7 +37,12 @@ def compile(file,lang,name,user):
             #print(data)
             #print(out)
             state=mfm.iscorrect(out.strip(),data.strip())
-            if not(state): break
-        
+            if not(state):
+                i-=1
+                break
+    i+=1
+    typer.echo(f"{i*(100/dtcnt)} 점")
+    #dsm.addscore(user,name,i*(100/dtcnt))
+    
     if state: mfm.movefile(file,path)
     return state

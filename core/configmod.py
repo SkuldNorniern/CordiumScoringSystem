@@ -3,7 +3,7 @@ import typer
 import pickle
 from core import loggermod as lgm
 from core import miscfuncmod as mfm
-
+from core import datasetmod as dsm
 file_pbdt = "problemdata.dat"
 file_dirdt = "dirdt.dat"
 
@@ -33,7 +33,10 @@ def chkpbdt(name,path,dtcnt,timeout):
 def gendirdt(name,path):
     dirdt={'name':'path'}
     name = mfm.rmpathval(name)
+    
     print(name)
+    dsm.init()
+    dsm.addproblem(name)
     path="./"+mfm.rmpathval(path)
     print(path)
     dirdt[name]=path
@@ -47,6 +50,8 @@ def genpbdt(name, path, pbpath,dtcnt,timeout):
     print(dirdt)
     
     name = mfm.rmpathval(name)
+    dsm.init()
+    dsm.addproblem(name)
     dirdt[name]=path
     print(dirdt)
     with open(file_dirdt,'wb') as fw:

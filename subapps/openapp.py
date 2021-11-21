@@ -6,7 +6,7 @@ from core import miscfuncmod as mfm
 def openpbf(name):
     typer.echo("Opening Problem File")
     path = cfm.calldirdt(name)
-    file =(path+"\\"+name+".pdf")
+    file = (mfm.rmwrongval(path)[1:]+"\\"+name+".pdf")
     sbp.Popen([file],shell=True)
 def opendir(name):
     typer.echo("Opening Problem Directory")

@@ -9,11 +9,17 @@ pathIron = r'C:\Program Files (x86)\IronPython 2.7\Lib'
 sys.path.append(pathIron)
 
 pathval = ".\/"
+wrongval = "."
 
 def rmpathval(name):
     for x in range(len(pathval)):
         name = name.replace(pathval[x],"")
     return name
+
+def rmwrongval(path):
+    for x in range(len(wrongval)):
+        path = path.replace(wrongval[x], "")
+    return path
 
 def iscorrect(a,b):
     return a==b
@@ -28,6 +34,7 @@ def rmfile(file):
     os.remove(file)
 
 def openfileexp(path):
+    path = rmwrongval(path)[1:]
     if ptf.system() == "Windows":
         os.startfile(path)
     elif ptf.system() == "Darwin":

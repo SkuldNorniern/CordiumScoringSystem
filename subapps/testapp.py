@@ -22,6 +22,7 @@ def tester(file):
     
     name = mfm.rmpathval(name)
     typer.echo(f"The problem name is {name},The user name is {user}")
+   
     res = rnm.compile(file,supported_language[ext],name,user)
     if res:print("Correct.")
     else: print("Wrong.")
