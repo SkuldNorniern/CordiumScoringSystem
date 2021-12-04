@@ -10,6 +10,7 @@ sys.path.append(pathIron)
 
 pathval = ".\/"
 wrongval = "."
+CREATE_NO_WINDOW = 0x08000000
 
 def rmpathval(name):
     for x in range(len(pathval)):
@@ -31,7 +32,14 @@ def movefile(file,path):
     shutil.move(file, path)
 
 def rmfile(file):
-    os.remove(file)
+    try:
+       os.remove(file)
+    except Exception:
+        sbp.call('taskkill /F /IM '+file, creationflags=CREATE_NO_WINDOW)
+        os.remove(file)
+    except:
+        pass
+
 
 def openfileexp(path):
     path = rmwrongval(path)[1:]
